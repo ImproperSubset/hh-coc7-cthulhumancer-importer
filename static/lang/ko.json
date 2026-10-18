@@ -1,0 +1,7 @@
+{
+  "HHCTHULHUMANCER.ImportType": "Cthulhumancer의 Foundry 내보내기 JSON",
+  "HHCTHULHUMANCER.InvalidActor": "선택한 JSON 파일은 Cthulhumancer의 Foundry 내보내기 파일이 아닌 것 같습니다.",
+  "HHCTHULHUMANCER.NeedsSystem": "Cthulhumancer 불러오기에는 모듈이 조사자 불러오기에 유형을 추가할 수 있는 CoC7 시스템이 필요합니다. 사용할 수 없습니다.",
+  "HHCTHULHUMANCER.PickFile": "Cthulhumancer에서 내보낸 JSON 파일을 선택하십시오.",
+  "HHCTHULHUMANCER.Summary": "Cthulhumancer의 조사자를 Foundry 내보내기로 내보낸 뒤 여기에 업로드하세요. 기능, 무기, 장비는 아래에서 선택한 위치에서 찾습니다."
+}

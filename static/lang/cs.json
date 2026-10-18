@@ -1,0 +1,7 @@
+{
+  "HHCTHULHUMANCER.ImportType": "JSON exportu pro Foundry z Cthulhumancer",
+  "HHCTHULHUMANCER.InvalidActor": "Vybraný JSON se nezdá být exportem pro Foundry z Cthulhumancer",
+  "HHCTHULHUMANCER.NeedsSystem": "Import z Cthulhumancer potřebuje systém CoC7, který modulům dovolí přidávat typy do Importu aktérů. Není k dispozici.",
+  "HHCTHULHUMANCER.PickFile": "Vyberte JSON soubor exportovaný z Cthulhumancer",
+  "HHCTHULHUMANCER.Summary": "Exportujte postavu z Cthulhumancer exportem pro Foundry a nahrajte ji sem. Dovednosti, zbraně a vybavení se hledají v umístěních vybraných níže."
+}

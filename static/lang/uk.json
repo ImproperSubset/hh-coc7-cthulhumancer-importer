@@ -1,0 +1,7 @@
+{
+  "HHCTHULHUMANCER.ImportType": "JSON експорту Cthulhumancer для Foundry",
+  "HHCTHULHUMANCER.InvalidActor": "Вибраний JSON не є експортом Cthulhumancer для Foundry",
+  "HHCTHULHUMANCER.NeedsSystem": "Імпорту з Cthulhumancer потрібна система CoC7, що дозволяє модулям додавати типи до Імпорту Актора. Він недоступний.",
+  "HHCTHULHUMANCER.PickFile": "Оберіть файл JSON, експортований з Cthulhumancer",
+  "HHCTHULHUMANCER.Summary": "Експортуйте вашого дослідника з Cthulhumancer експортом для Foundry й завантажте його сюди. Уміння, зброя та спорядження шукаються в обраних нижче місцях."
+}

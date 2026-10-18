@@ -1,0 +1,7 @@
+{
+  "HHCTHULHUMANCER.ImportType": "Cthulhumancer 的 Foundry 匯出 JSON",
+  "HHCTHULHUMANCER.InvalidActor": "所選的 JSON 似乎不是 Cthulhumancer 的 Foundry 匯出",
+  "HHCTHULHUMANCER.NeedsSystem": "Cthulhumancer 匯入需要允許模組向角色匯入器新增類型的 CoC7 系統。它無法使用。",
+  "HHCTHULHUMANCER.PickFile": "選擇從 Cthulhumancer 匯出的 JSON 檔案",
+  "HHCTHULHUMANCER.Summary": "用 Foundry 匯出功能匯出你在 Cthulhumancer 的調查員並上傳到這裡。技能、武器與裝備會在下方選擇的位置中尋找。"
+}

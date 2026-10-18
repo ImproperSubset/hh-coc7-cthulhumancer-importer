@@ -1,0 +1,7 @@
+{
+  "HHCTHULHUMANCER.ImportType": "JSON de exportación a Foundry de Cthulhumancer",
+  "HHCTHULHUMANCER.InvalidActor": "El JSON seleccionado no parece ser una exportación a Foundry de Cthulhumancer",
+  "HHCTHULHUMANCER.NeedsSystem": "La importación de Cthulhumancer necesita un sistema CoC7 que permita a los módulos añadir tipos al Importador de actores. No está disponible.",
+  "HHCTHULHUMANCER.PickFile": "Elige el archivo JSON exportado desde Cthulhumancer",
+  "HHCTHULHUMANCER.Summary": "Exporta tu personaje desde Cthulhumancer con su exportación a Foundry y súbelo aquí. Las habilidades, armas y equipo se buscan en las ubicaciones elegidas abajo."
+}

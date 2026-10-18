@@ -1,0 +1,50 @@
+name: Release
+on:
+  release:
+    types:
+      - published
+permissions:
+  contents: read
+jobs:
+  check:
+    uses: ./.github/workflows/ci.yml
+  release:
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.event.release.tag_name }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: npm
+      - name: Check the tag matches the version
+        run: |
+          for file in static/module.json package.json; do
+            version=$(jq -r .version "$file")
+            if [ "$version" != "$TAG" ]; then
+              echo "::error file=$file::version $version does not match release tag $TAG"
+              exit 1
+            fi
+          done
+      - run: npm ci
+      - name: Build
+        run: |
+          jq -n --arg folder "$RUNNER_TEMP/foundry" '{release: $folder, currentSelection: "release"}' > fvtt.config.json
+          npm run build
+      - name: Package
+        env:
+          DOWNLOAD: https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/module.zip
+        run: |
+          cd "$RUNNER_TEMP/foundry/Data/modules"
+          jq --arg download "$DOWNLOAD" '.download = $download' hh-coc7-cthulhumancer-importer/module.json > "$RUNNER_TEMP/module.json"
+          cp "$RUNNER_TEMP/module.json" hh-coc7-cthulhumancer-importer/module.json
+          zip -r "$RUNNER_TEMP/module.zip" hh-coc7-cthulhumancer-importer
+      - name: Upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" "$RUNNER_TEMP/module.json" "$RUNNER_TEMP/module.zip" --clobber

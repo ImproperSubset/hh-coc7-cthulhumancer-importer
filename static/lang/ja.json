@@ -1,0 +1,7 @@
+{
+  "HHCTHULHUMANCER.ImportType": "Cthulhumancer の Foundry 出力 JSON",
+  "HHCTHULHUMANCER.InvalidActor": "どうやら選択したJSONファイルは Cthulhumancer の Foundry 出力ではないようだ",
+  "HHCTHULHUMANCER.NeedsSystem": "Cthulhumancer のインポートには、モジュールがアクター･インポーターに種類を追加できる CoC7 システムが必要です。利用できません。",
+  "HHCTHULHUMANCER.PickFile": "Cthulhumancer から出力したJSONファイルを選択",
+  "HHCTHULHUMANCER.Summary": "Cthulhumancer 上のキャラクターを Foundry 出力で出力し、ここにアップロードする。技能、武器、装備は下で選んだ場所から探します。"
+}

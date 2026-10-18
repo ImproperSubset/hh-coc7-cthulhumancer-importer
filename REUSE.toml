@@ -1,0 +1,23 @@
+version = 1
+
+# The last matching annotation sets a file's copyright and license.
+
+[[annotations]]
+path = "**"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Rhett D. Hudson"
+SPDX-License-Identifier = "GPL-3.0-only"
+
+# Copied unchanged from the Call of Cthulhu 7th Edition system
+[[annotations]]
+path = [".editorconfig", "eslint.config.js", "webpack.config.js"]
+precedence = "override"
+SPDX-FileCopyrightText = "Miskatonic Investigative Society"
+SPDX-License-Identifier = "GPL-3.0-only"
+
+# Modified from the Call of Cthulhu 7th Edition system
+[[annotations]]
+path = ["scripts/init.js", "scripts/webpack-config.js", "scripts/src/template-helpers.js", "hh-coc7-cthulhumancer-importer/apps/cthulhumancer-importer.js"]
+precedence = "override"
+SPDX-FileCopyrightText = ["Miskatonic Investigative Society", "2026 Rhett D. Hudson"]
+SPDX-License-Identifier = "GPL-3.0-only"

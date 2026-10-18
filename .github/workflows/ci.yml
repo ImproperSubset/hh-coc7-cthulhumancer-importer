@@ -1,0 +1,32 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Lint workflows
+        uses: docker://rhysd/actionlint:1.7.12
+        with:
+          args: -color
+      - name: Check copyright and license information
+        uses: fsfe/reuse-action@v6
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: npm
+      - run: npm ci
+      - run: npm run eslint
+      - run: npm test
+      - name: Build
+        run: |
+          jq -n --arg folder "$RUNNER_TEMP/foundry" '{check: $folder, currentSelection: "check"}' > fvtt.config.json
+          npm run build

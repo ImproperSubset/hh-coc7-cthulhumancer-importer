@@ -1,0 +1,12 @@
+# Dependencies
+/node_modules/
+
+# Local Foundry VTT data folders written by npm run init, and build output inside the clone
+/build/
+/fvtt.config.json
+
+# Editors and logs
+.idea/
+.vs/
+.vscode/
+*.log

@@ -1,0 +1,7 @@
+{
+  "HHCTHULHUMANCER.ImportType": "Cthulhumancer的Foundry导出JSON",
+  "HHCTHULHUMANCER.InvalidActor": "所选JSON似乎不是Cthulhumancer的Foundry导出",
+  "HHCTHULHUMANCER.NeedsSystem": "Cthulhumancer导入需要一个允许模组向角色导入器添加类型的CoC7系统。它不可用。",
+  "HHCTHULHUMANCER.PickFile": "从Cthulhumancer导出的JSON文件",
+  "HHCTHULHUMANCER.Summary": "用Foundry导出功能导出你的Cthulhumancer角色并上传到这里。技能、武器和装备会在下方选择的位置中寻找。"
+}
