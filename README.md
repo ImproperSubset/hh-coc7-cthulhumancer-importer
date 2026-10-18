@@ -4,7 +4,7 @@
 
 Adds Cthulhumancer's Foundry export to the Actor Importer of the [Call of Cthulhu 7th Edition system](https://github.com/Miskatonic-Investigative-Society/CoC7-FoundryVTT) on [Foundry Virtual Tabletop](https://foundryvtt.com). Skills, weapons and gear are matched against your item compendiums, as the system's own Dhole's House import does, so imported investigators have the system's combat, specialization and uncommon skill settings and their CoC IDs.
 
-Requires Foundry VTT 12, 13 or 14 and a CoC7 system that lets modules add types to the Actor Importer (`game.CoC7.actorImporterType`). The released CoC7 system doesn't have this yet; the [patched system](CONTRIBUTING.md#patched-coc7-system) does. With a system that lacks it, the module warns the Keeper when the world loads and adds nothing.
+Requires Foundry VTT 12, 13 or 14 and CoC7 8.16.hh.4 or later from [ImproperSubset/CoC7-FoundryVTT](https://github.com/ImproperSubset/CoC7-FoundryVTT), installed from the manifest URL `https://github.com/ImproperSubset/CoC7-FoundryVTT/releases/latest/download/system.json`. With any other CoC7 system, the module warns the Keeper when the world loads and adds nothing.
 
 ## Installation.
 

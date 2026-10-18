@@ -23,7 +23,8 @@
         "id": "CoC7",
         "type": "system",
         "compatibility": {
-          "minimum": "8.16"
+          "minimum": "8.16.hh.4",
+          "verified": "8.16.hh.4"
         }
       }
     ]

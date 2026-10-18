@@ -17,7 +17,7 @@ The build reuses the CoC7 system's webpack scripts, which compile the module and
 ### Prerequisites.
 
 - Node.js 20.19+, 22.13+ or 24+ (CI uses Node 24). The build alone runs on Node 20.9 or later; ESLint needs the newer versions.
-- A local Foundry VTT installation with the [patched CoC7 system](#patched-coc7-system), for testing
+- A local Foundry VTT installation with the CoC7 system the [README](README.md) names, for testing
 
 ### Setup.
 
@@ -69,17 +69,6 @@ tests/                             node:test unit tests
 ### Continuous integration.
 
 Every push to `main` and every pull request runs [`ci.yml`](.github/workflows/ci.yml): actionlint on the workflows, a [REUSE](https://reuse.software/) licensing check, ESLint, the tests and a production build.
-
-### Patched CoC7 system.
-
-The module adds its import type with `game.CoC7.actorImporterType` and uses the system's own `game.CoC7.guessItems`, `game.CoC7.toKebabCase` and `game.CoC7.createImportCharactersFolderIfNotExists`, so imported investigators match items, get CoC IDs and land in the same folder as the system's own imports. The released CoC7 system has none of them.
-
-They come from two commits on the [fork](https://github.com/ImproperSubset/CoC7-FoundryVTT)'s `actor-importer-types` branch, which sits on CoC7's latest release:
-
-- `Expose importer helpers on game.CoC7` adds the three helpers in `coc7/hooks/init.js`.
-- `Let packages add import types to the Actor Importer` adds `game.CoC7.actorImporterType(key, label, importer, summary, pick)`, shaped like the system's own `game.CoC7.journalStyle`, and the Actor Importer branch that shows a registered type's summary and JSON file picker and calls `importer(json, { source })`.
-
-Fork release branches and fork releases are described in the [Group Checks for CoC7 contributing guide](https://github.com/ImproperSubset/hh-coc7-group-check/blob/main/CONTRIBUTING.md#patched-coc7-system).
 
 ## Releasing.
 
