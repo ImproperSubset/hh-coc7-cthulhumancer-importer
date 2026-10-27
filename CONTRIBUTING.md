@@ -72,14 +72,22 @@ Every push to `main` and every pull request runs [`ci.yml`](.github/workflows/ci
 
 ## Releasing.
 
-1. Bump the version everywhere it lives, and commit:
+Versions are the CoC7 release the module is based on, then `hh` and a build number: `8.16.hh.1`, `8.16.hh.2`, then `8.17.hh.1` on 8.17. The importer and build scripts are adapted from that CoC7 release (see [LICENSING.md](LICENSING.md)). A release without a new CoC7 release bumps the build number.
+
+For a new CoC7 release, compare the files adapted from the system between the two releases, in a clone of the CoC7 system, and carry over what applies:
+
+```sh
+git diff 8.16 8.17 -- coc7/apps/dholehouse-importer.js scripts/init.js scripts/webpack-config.js scripts/src/template-helpers.js .editorconfig eslint.config.js webpack.config.js
+```
+
+Then raise the CoC7 `minimum` and `verified` in `static/module.json` to the fork release for it, and release as `<release>.hh.1`.
+
+1. Set the version in `package.json`, both top-level entries of `package-lock.json` and `static/module.json`, and commit. `npm version` rejects this version format, so edit the files directly.
 
    ```sh
-   npm version 0.2.0 --no-git-tag-version   # updates package.json and package-lock.json
-   # then set "version": "0.2.0" in static/module.json by hand
-   git commit -am "Release 0.2.0"
+   git commit -am "Release 8.16.hh.2"
    ```
 
-2. Push, then publish a GitHub release whose tag is exactly the version (`0.2.0`, no `v` prefix).
+2. Push, then publish a GitHub release whose tag is exactly the version (`8.16.hh.2`, no `v` prefix).
 
 The [release workflow](.github/workflows/release.yml) runs the full CI check, fails if the tag doesn't match the version in both `package.json` and `static/module.json`, builds the module, sets the `download` URL in `module.json`, and attaches `module.json` and `module.zip` to the release. Foundry VTT's manifest URL points at the latest release's `module.json`, so users get the update automatically.

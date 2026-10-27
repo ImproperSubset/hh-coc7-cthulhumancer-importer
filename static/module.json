@@ -2,7 +2,7 @@
   "id": "hh-coc7-cthulhumancer-importer",
   "title": "Cthulhumancer Importer for CoC7",
   "description": "Adds Cthulhumancer's Foundry export to the CoC7 Actor Importer, matching skills, weapons and gear against the item compendiums.",
-  "version": "0.1.0",
+  "version": "8.16.hh.1",
   "authors": [
     {
       "name": "Rhett D. Hudson"
