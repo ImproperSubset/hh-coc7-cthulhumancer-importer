@@ -1,5 +1,5 @@
 // cSpell:words cthulhumancer hhcthulhumancer vtta
-import { SYSTEM_API, SYSTEM_ID } from '../constants.js'
+import { BASE_ERAS, SYSTEM_API, SYSTEM_ID } from '../constants.js'
 
 export default class HHCthulhumancerActorImporter {
   /**
@@ -17,6 +17,58 @@ export default class HHCthulhumancerActorImporter {
    */
   static isCthulhumancer (data) {
     return typeof data?._cthulhumancer === 'object' && data._cthulhumancer !== null && data.type === 'character' && Array.isArray(data.items)
+  }
+
+  /**
+   * CoC ID priority of an item, 0 when it has none
+   * @param {object} item
+   * @returns {integer}
+   */
+  static priority (item) {
+    return parseInt(item?.flags?.[SYSTEM_ID]?.cocidFlag?.priority, 10) || 0
+  }
+
+  /**
+   * Replace each found item with a candidate of the same CoC ID and higher priority
+   * @param {object} found Items by name
+   * @param {Array} candidates
+   * @returns {object}
+   */
+  static preferHigherPriority (found, candidates) {
+    const byId = {}
+    for (const candidate of candidates) {
+      byId[candidate.flags[SYSTEM_ID].cocidFlag.id] = candidate
+    }
+    const output = {}
+    for (const [name, item] of Object.entries(found)) {
+      const candidate = byId[item.flags?.[SYSTEM_ID]?.cocidFlag?.id]
+      output[name] = (typeof candidate !== 'undefined' && HHCthulhumancerActorImporter.priority(candidate) > HHCthulhumancerActorImporter.priority(item) ? candidate : item)
+    }
+    return output
+  }
+
+  /**
+   * Find items as the system does, then on a Pulp world prefer a higher priority item of the same CoC ID made for the era it is based on, such as a 1920s weapon in Pulp Cthulhu
+   * @param {string} type
+   * @param {Array} names
+   * @param {object} options
+   * @param {string} options.source
+   * @param {boolean} [options.fallbackAny]
+   * @returns {object}
+   */
+  static async guessItems (type, names, options) {
+    const found = await game.CoC7.guessItems(type, names, options)
+    const baseEra = BASE_ERAS[game.settings.get(SYSTEM_ID, 'worldEra')]
+    const cocid = game.CoC7.cocid
+    if (typeof baseEra === 'undefined' || typeof cocid?.fromCoCIDRegexBest !== 'function' || typeof cocid?.makeGroupRegEx !== 'function') {
+      return found
+    }
+    const ids = [...new Set(Object.values(found).map(i => i.flags?.[SYSTEM_ID]?.cocidFlag?.id).filter(id => typeof id === 'string'))]
+    if (!ids.length) {
+      return found
+    }
+    const candidates = await cocid.fromCoCIDRegexBest({ cocidRegExp: cocid.makeGroupRegEx(ids), type: 'i', era: baseEra })
+    return HHCthulhumancerActorImporter.preferHigherPriority(found, candidates)
   }
 
   /**
@@ -124,7 +176,7 @@ export default class HHCthulhumancerActorImporter {
    */
   static async extractSkills (cthulhumancerSkills, options, progressBar) {
     const lookFor = HHCthulhumancerActorImporter.filterSkills(cthulhumancerSkills, options.edu, options.customNames)
-    const foundItems = await game.CoC7.guessItems('skill', lookFor.map(i => i.name), { source: options.source, fallbackAny: true })
+    const foundItems = await HHCthulhumancerActorImporter.guessItems('skill', lookFor.map(i => i.name), { source: options.source, fallbackAny: true })
     const skills = []
     for (const entry of lookFor) {
       progressBar.bar.update({ pct: progressBar.current / progressBar.max })
@@ -244,7 +296,7 @@ export default class HHCthulhumancerActorImporter {
     }
     const foundItems = {}
     for (const type in byType) {
-      foundItems[type] = await game.CoC7.guessItems(type, byType[type], { source: options.source })
+      foundItems[type] = await HHCthulhumancerActorImporter.guessItems(type, byType[type], { source: options.source })
     }
     const items = []
     for (const item of cthulhumancerItems) {
@@ -357,8 +409,8 @@ export default class HHCthulhumancerActorImporter {
       }
     }
     let candidates = Object.values(lookup).flat()
-    let foundWeapons = await game.CoC7.guessItems('weapon', candidates, { source: options.source })
-    let foundItems = await game.CoC7.guessItems('item', candidates, { source: options.source })
+    let foundWeapons = await HHCthulhumancerActorImporter.guessItems('weapon', candidates, { source: options.source })
+    let foundItems = await HHCthulhumancerActorImporter.guessItems('item', candidates, { source: options.source })
     const unmatched = names.filter(name => !lookup[name].some(n => typeof foundWeapons[n] !== 'undefined' || typeof foundItems[n] !== 'undefined'))
     if (unmatched.length) {
       const known = await HHCthulhumancerActorImporter.knownNames(['weapon', 'item'])
@@ -383,8 +435,8 @@ export default class HHCthulhumancerActorImporter {
         }
       }
       candidates = Object.values(lookup).flat()
-      foundWeapons = await game.CoC7.guessItems('weapon', candidates, { source: options.source })
-      foundItems = await game.CoC7.guessItems('item', candidates, { source: options.source })
+      foundWeapons = await HHCthulhumancerActorImporter.guessItems('weapon', candidates, { source: options.source })
+      foundItems = await HHCthulhumancerActorImporter.guessItems('item', candidates, { source: options.source })
     }
     const gear = []
     for (const name of names) {

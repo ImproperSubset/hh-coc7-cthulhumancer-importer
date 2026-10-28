@@ -153,3 +153,50 @@ test('the module needs every system function it uses', () => {
   globalThis.game = {}
   assert.equal(HHCthulhumancerActorImporter.systemSupported(), false)
 })
+
+const cocidItem = (name, id, priority) => ({ name, flags: { CoC7: { cocidFlag: { id, priority } } } })
+
+test('a found item is replaced only by a higher priority item of the same CoC ID', () => {
+  const system45 = cocidItem('.45 Automatic', 'i.weapon.45-automatic', 0)
+  const keeper45 = cocidItem('.45 Automatic', 'i.weapon.45-automatic', 10)
+  const keeperKnife = cocidItem('Knife, Medium', 'i.weapon.knife-medium', 10)
+  const worldKnife = cocidItem('Knife, Medium', 'i.weapon.knife-medium', 20)
+  const plain = { name: 'Rope', flags: {} }
+  const output = HHCthulhumancerActorImporter.preferHigherPriority({ '.45 Automatic': system45, 'Knife, Medium': worldKnife, Rope: plain }, [keeper45, keeperKnife])
+  assert.equal(output['.45 Automatic'], keeper45)
+  assert.equal(output['Knife, Medium'], worldKnife)
+  assert.equal(output.Rope, plain)
+  assert.equal(HHCthulhumancerActorImporter.priority(cocidItem('x', 'i.item.x', '7')), 7)
+  assert.equal(HHCthulhumancerActorImporter.priority(plain), 0)
+})
+
+test('on a Pulp world items are also looked up in the era it is based on', async () => {
+  const system45 = cocidItem('.45 Automatic', 'i.weapon.45-automatic', 0)
+  const keeper45 = cocidItem('.45 Automatic', 'i.weapon.45-automatic', 10)
+  const lookups = []
+  const mockGame = (worldEra, cocid) => ({
+    settings: { get: (scope, key) => (scope === 'CoC7' && key === 'worldEra' ? worldEra : undefined) },
+    CoC7: { guessItems: async () => ({ '.45 Automatic': system45 }), cocid }
+  })
+  const cocid = {
+    makeGroupRegEx: (ids) => new RegExp('^(' + ids.join('|') + ')$'),
+    fromCoCIDRegexBest: async (options) => {
+      lookups.push(options)
+      return [keeper45]
+    }
+  }
+  globalThis.game = mockGame('pulp', cocid)
+  assert.equal((await HHCthulhumancerActorImporter.guessItems('weapon', ['.45 Automatic'], { source: 'iwms' }))['.45 Automatic'], keeper45)
+  assert.equal(lookups.length, 1)
+  assert.equal(lookups[0].era, 'standard')
+  assert.equal(lookups[0].type, 'i')
+  assert.equal(lookups[0].cocidRegExp.test('i.weapon.45-automatic'), true)
+  globalThis.game = mockGame('modernPulp', cocid)
+  await HHCthulhumancerActorImporter.guessItems('weapon', ['.45 Automatic'], { source: 'iwms' })
+  assert.equal(lookups[1].era, 'modern')
+  globalThis.game = mockGame('standard', cocid)
+  assert.equal((await HHCthulhumancerActorImporter.guessItems('weapon', ['.45 Automatic'], { source: 'iwms' }))['.45 Automatic'], system45)
+  assert.equal(lookups.length, 2)
+  globalThis.game = mockGame('pulp', undefined)
+  assert.equal((await HHCthulhumancerActorImporter.guessItems('weapon', ['.45 Automatic'], { source: 'iwms' }))['.45 Automatic'], system45)
+})

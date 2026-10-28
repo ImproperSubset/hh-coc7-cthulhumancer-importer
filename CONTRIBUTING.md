@@ -45,7 +45,7 @@ After a build, reload Foundry VTT (F5) to pick up the changes.
 
 The tests run under Node with no Foundry VTT runtime. `foundry.utils.duplicate` and `foundry.utils.setProperty` are replaced by equivalents, so they cover the logic that doesn't reach into Foundry or the system:
 
-- `tests/cthulhumancer-importer.test.js`: recognizing an export, skill names, merging duplicate skills, which unspent skills are kept, the own language, skills the player added, gear names and word matching, Tokenizer image names and folder settings, Pulp talent rules in the v13 and v14 effect formats, and the system check.
+- `tests/cthulhumancer-importer.test.js`: recognizing an export, skill names, merging duplicate skills, which unspent skills are kept, the own language, skills the player added, gear names and word matching, the base era lookup on Pulp worlds and CoC ID priority, Tokenizer image names and folder settings, Pulp talent rules in the v13 and v14 effect formats, and the system check.
 - `tests/lang.test.js`: every language listed in `module.json` has the same keys and placeholders as `en.json`.
 
 Matching against compendiums, creating the actor and the Actor Importer itself are tested in a running Foundry VTT world.
