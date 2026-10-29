@@ -216,27 +216,29 @@ test('weapons holding no ammunition are loaded with as many bullets as they take
   assert.equal(item.system.ammo, undefined)
 })
 
-test('Unarmed is added unless a weapon with its CoC ID is already there', async () => {
+test('Unarmed and Mnvr are added unless a weapon with their CoC ID is already there', async () => {
   const unarmed = { _id: 'abc', name: 'Unarmed', type: 'weapon', folder: 'f', flags: { CoC7: { cocidFlag: { id: 'i.weapon.brawl', priority: 0 } } } }
+  const mnvr = { _id: 'def', name: 'Mnvr', type: 'weapon', folder: 'f', flags: { CoC7: { cocidFlag: { id: 'i.weapon.mnvr', priority: 0 } } } }
   const asked = []
   globalThis.game = {
     settings: { get: () => 'standard' },
     CoC7: {
       guessItems: async (type, names, options) => {
         asked.push({ type, names, options })
-        return { 'i.weapon.brawl': unarmed }
+        return Object.fromEntries([unarmed, mnvr].map(i => [i.flags.CoC7.cocidFlag.id, i]).filter(([id]) => names.includes(id)))
       }
     }
   }
-  const added = await HHCthulhumancerActorImporter.extractUnarmed([{ type: 'weapon', name: '.45 Automatic', flags: {} }], { source: 'iwms' })
-  assert.deepEqual(asked, [{ type: 'weapon', names: ['i.weapon.brawl'], options: { source: 'iwms' } }])
-  assert.equal(added.length, 1)
-  assert.equal(added[0].name, 'Unarmed')
+  const added = await HHCthulhumancerActorImporter.extractStandardWeapons([{ type: 'weapon', name: '.45 Automatic', flags: {} }], { source: 'iwms' })
+  assert.deepEqual(asked, [{ type: 'weapon', names: ['i.weapon.brawl', 'i.weapon.mnvr'], options: { source: 'iwms' } }])
+  assert.deepEqual(added.map(i => i.name), ['Unarmed', 'Mnvr'])
   assert.equal(added[0]._id, undefined)
   assert.equal(added[0].folder, undefined)
   assert.equal(unarmed._id, 'abc')
-  assert.deepEqual(await HHCthulhumancerActorImporter.extractUnarmed([unarmed], { source: 'iwms' }), [])
-  assert.equal(asked.length, 1)
+  assert.deepEqual((await HHCthulhumancerActorImporter.extractStandardWeapons([unarmed], { source: 'iwms' })).map(i => i.name), ['Mnvr'])
+  assert.deepEqual(asked[1].names, ['i.weapon.mnvr'])
+  assert.deepEqual(await HHCthulhumancerActorImporter.extractStandardWeapons([unarmed, mnvr], { source: 'iwms' }), [])
+  assert.equal(asked.length, 2)
   globalThis.game.CoC7.guessItems = async () => ({})
-  assert.deepEqual(await HHCthulhumancerActorImporter.extractUnarmed([], { source: '' }), [])
+  assert.deepEqual(await HHCthulhumancerActorImporter.extractStandardWeapons([], { source: '' }), [])
 })

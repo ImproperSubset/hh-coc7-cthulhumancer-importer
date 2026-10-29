@@ -1,5 +1,5 @@
 // cSpell:words cthulhumancer hhcthulhumancer vtta
-import { BASE_ERAS, SYSTEM_API, SYSTEM_ID, UNARMED_COCID } from '../constants.js'
+import { BASE_ERAS, SYSTEM_API, STANDARD_WEAPON_COCIDS, SYSTEM_ID } from '../constants.js'
 
 export default class HHCthulhumancerActorImporter {
   /**
@@ -480,25 +480,25 @@ export default class HHCthulhumancerActorImporter {
   }
 
   /**
-   * The system's Unarmed weapon, unless the items already have it
+   * The system's Unarmed and Mnvr weapons, except those the items already have
    * @param {Array} items
    * @param {object} options
    * @param {string} options.source
    * @returns {Array}
    */
-  static async extractUnarmed (items, options) {
-    if (items.some(i => i.type === 'weapon' && i.flags?.[SYSTEM_ID]?.cocidFlag?.id === UNARMED_COCID)) {
+  static async extractStandardWeapons (items, options) {
+    const missing = STANDARD_WEAPON_COCIDS.filter(id => !items.some(i => i.type === 'weapon' && i.flags?.[SYSTEM_ID]?.cocidFlag?.id === id))
+    if (!missing.length) {
       return []
     }
-    const found = (await HHCthulhumancerActorImporter.guessItems('weapon', [UNARMED_COCID], { source: options.source }))[UNARMED_COCID]
-    if (typeof found === 'undefined') {
-      return []
-    }
-    const cloned = foundry.utils.duplicate(found)
-    for (const key of ['_id', '_stats', 'folder', 'sort', 'ownership']) {
-      delete cloned[key]
-    }
-    return [cloned]
+    const found = await HHCthulhumancerActorImporter.guessItems('weapon', missing, { source: options.source })
+    return missing.filter(id => typeof found[id] !== 'undefined').map(id => {
+      const cloned = foundry.utils.duplicate(found[id])
+      for (const key of ['_id', '_stats', 'folder', 'sort', 'ownership']) {
+        delete cloned[key]
+      }
+      return cloned
+    })
   }
 
   /**
@@ -676,7 +676,7 @@ export default class HHCthulhumancerActorImporter {
     const skills = await HHCthulhumancerActorImporter.extractSkills(sourceSkills, { source: options.source, edu: isNaN(edu) ? undefined : edu, customNames: HHCthulhumancerActorImporter.customSkillNames(cthulhumancerData) }, progressBar)
     const items = await HHCthulhumancerActorImporter.extractItems(otherItems, options, progressBar)
     const gear = await HHCthulhumancerActorImporter.extractGear(gearNames, options, progressBar)
-    gear.push(...await HHCthulhumancerActorImporter.extractUnarmed(items.concat(gear), options))
+    gear.push(...await HHCthulhumancerActorImporter.extractStandardWeapons(items.concat(gear), options))
     HHCthulhumancerActorImporter.loadWeapons(items.concat(gear))
     if (CONFIG.debug.CoC7Importer) {
       console.log('Skills: ', skills)
