@@ -1,4 +1,5 @@
 {
+  "HHCTHULHUMANCER.GearNotFound": "没有与此装备匹配的武器或道具，因此未添加：{names}",
   "HHCTHULHUMANCER.ImportType": "Cthulhumancer的Foundry导出JSON",
   "HHCTHULHUMANCER.InvalidActor": "所选JSON似乎不是Cthulhumancer的Foundry导出",
   "HHCTHULHUMANCER.NeedsSystem": "Cthulhumancer导入需要一个允许模组向角色导入器添加类型的CoC7系统。它不可用。",

@@ -392,7 +392,7 @@ export default class HHCthulhumancerActorImporter {
   }
 
   /**
-   * Create weapon and item objects for gear names, matching weapons then items, retrying without a trailing (model) part, then by the same words in any order, then by the only weapon whose name contains all the words
+   * Create weapon and item objects for gear names, matching weapons then items, retrying without a trailing (model) part, then by the same words in any order, then by the only weapon whose name contains all the words, leaving out and reporting gear that matches nothing
    * @param {Array} names
    * @param {object} options
    * @param {string} options.source
@@ -439,26 +439,27 @@ export default class HHCthulhumancerActorImporter {
       foundItems = await HHCthulhumancerActorImporter.guessItems('item', candidates, { source: options.source })
     }
     const gear = []
+    const missing = []
     for (const name of names) {
       progressBar.bar.update({ pct: progressBar.current / progressBar.max })
       progressBar.current++
       const match = lookup[name].map(n => foundWeapons[n] ?? foundItems[n]).find(i => typeof i !== 'undefined')
-      let cloned
-      if (typeof match !== 'undefined') {
-        cloned = foundry.utils.duplicate(match)
-        for (const key of ['_id', '_stats', 'folder', 'sort', 'ownership']) {
-          delete cloned[key]
-        }
-      } else {
-        cloned = {
-          type: 'item'
-        }
+      if (typeof match === 'undefined') {
+        missing.push(name)
+        continue
+      }
+      const cloned = foundry.utils.duplicate(match)
+      for (const key of ['_id', '_stats', 'folder', 'sort', 'ownership']) {
+        delete cloned[key]
       }
       foundry.utils.setProperty(cloned, 'name', name)
       if (typeof cloned.flags?.[SYSTEM_ID]?.cocidFlag?.id !== 'string') {
         foundry.utils.setProperty(cloned, 'flags.' + SYSTEM_ID + '.cocidFlag.id', 'i.' + cloned.type + '.' + game.CoC7.toKebabCase(name))
       }
       gear.push(cloned)
+    }
+    if (missing.length) {
+      ui.notifications.error(game.i18n.format('HHCTHULHUMANCER.GearNotFound', { names: missing.join(', ') }), { permanent: true })
     }
     return gear
   }

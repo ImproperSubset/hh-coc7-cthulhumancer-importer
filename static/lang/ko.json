@@ -1,4 +1,5 @@
 {
+  "HHCTHULHUMANCER.GearNotFound": "이 소지품과 일치하는 무기나 아이템이 없어 추가하지 않았습니다: {names}",
   "HHCTHULHUMANCER.ImportType": "Cthulhumancer의 Foundry 내보내기 JSON",
   "HHCTHULHUMANCER.InvalidActor": "선택한 JSON 파일은 Cthulhumancer의 Foundry 내보내기 파일이 아닌 것 같습니다.",
   "HHCTHULHUMANCER.NeedsSystem": "Cthulhumancer 불러오기에는 모듈이 조사자 불러오기에 유형을 추가할 수 있는 CoC7 시스템이 필요합니다. 사용할 수 없습니다.",
