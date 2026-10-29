@@ -1,4 +1,5 @@
 {
+  "HHCTHULHUMANCER.GearNotFound": "Inget vapen eller föremål matchar dessa ägodelar, så de lades inte till: {names}",
   "HHCTHULHUMANCER.ImportType": "Cthulhumancers Foundry-export JSON",
   "HHCTHULHUMANCER.InvalidActor": "Den valda JSON-filen tycks inte vara en Foundry-export från Cthulhumancer",
   "HHCTHULHUMANCER.NeedsSystem": "Cthulhumancer-import behöver ett CoC7-system där moduler kan lägga till typer i karaktärsimporten. Den är inte tillgänglig.",

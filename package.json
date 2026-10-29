@@ -1,6 +1,6 @@
 {
   "name": "hh-coc7-cthulhumancer-importer",
-  "version": "8.16.hh.2",
+  "version": "8.16.hh.3",
   "description": "Imports Cthulhumancer investigators into the CoC7 system on Foundry Virtual Tabletop through the Actor Importer.",
   "scripts": {
     "build": "webpack --mode production",

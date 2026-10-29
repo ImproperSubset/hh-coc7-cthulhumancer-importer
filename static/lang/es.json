@@ -1,4 +1,5 @@
 {
+  "HHCTHULHUMANCER.GearNotFound": "Ningún arma u objeto coincide con este equipo, así que no se ha añadido: {names}",
   "HHCTHULHUMANCER.ImportType": "JSON de exportación a Foundry de Cthulhumancer",
   "HHCTHULHUMANCER.InvalidActor": "El JSON seleccionado no parece ser una exportación a Foundry de Cthulhumancer",
   "HHCTHULHUMANCER.NeedsSystem": "La importación de Cthulhumancer necesita un sistema CoC7 que permita a los módulos añadir tipos al Importador de actores. No está disponible.",

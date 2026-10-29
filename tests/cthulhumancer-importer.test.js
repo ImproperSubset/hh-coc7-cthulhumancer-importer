@@ -104,6 +104,29 @@ test('gear names match whatever their word order and punctuation', () => {
   assert.equal(HHCthulhumancerActorImporter.wordKey('Revolver, .38'), HHCthulhumancerActorImporter.wordKey('.38 Revolver'))
 })
 
+test('gear that matches nothing is left out and reported', async () => {
+  const automatic = { _id: 'abc', name: '.45 Automatic', type: 'weapon', flags: { CoC7: { cocidFlag: { id: 'i.weapon.45-automatic', priority: 0 } } } }
+  const errors = []
+  globalThis.ui = { notifications: { error: (message, options) => errors.push({ message, options }) } }
+  globalThis.game = {
+    settings: { get: () => 'standard' },
+    items: [],
+    packs: [],
+    i18n: { format: (key, data) => key + ' ' + data.names },
+    CoC7: {
+      guessItems: async (type, names) => type === 'weapon' && names.includes('.45 Automatic') ? { '.45 Automatic': automatic } : {}
+    }
+  }
+  const progressBar = { current: 0, max: 3, bar: { update: () => {} } }
+  const gear = await HHCthulhumancerActorImporter.extractGear(['.45 Automatic', 'Elephant Gun', 'Lucky Rabbit Foot'], { source: 'iwms' }, progressBar)
+  assert.deepEqual(gear.map(i => i.name), ['.45 Automatic'])
+  assert.deepEqual(errors, [{ message: 'HHCTHULHUMANCER.GearNotFound Elephant Gun, Lucky Rabbit Foot', options: { permanent: true } }])
+  assert.equal(progressBar.current, 3)
+  errors.length = 0
+  await HHCthulhumancerActorImporter.extractGear(['.45 Automatic'], { source: 'iwms' }, progressBar)
+  assert.deepEqual(errors, [])
+})
+
 test('Tokenizer image names are compared by letters and digits only', () => {
   assert.equal(HHCthulhumancerActorImporter.imageKey('Dr. Jean-Luc Ménard'), 'drjeanlucménard')
   assert.equal(HHCthulhumancerActorImporter.imageKey('Dr_Jean_Luc_Ménard'), 'drjeanlucménard')
