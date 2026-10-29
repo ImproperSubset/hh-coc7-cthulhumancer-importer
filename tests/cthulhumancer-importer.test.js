@@ -200,3 +200,45 @@ test('on a Pulp world items are also looked up in the era it is based on', async
   globalThis.game = mockGame('pulp', undefined)
   assert.equal((await HHCthulhumancerActorImporter.guessItems('weapon', ['.45 Automatic'], { source: 'iwms' }))['.45 Automatic'], system45)
 })
+
+test('weapons holding no ammunition are loaded with as many bullets as they take', () => {
+  const weapon = (bullets, ammo) => ({ type: 'weapon', system: { bullets, ammo } })
+  const empty = weapon(7, 0)
+  const partial = weapon(7, 4)
+  const melee = weapon(null, 0)
+  const text = weapon('2', undefined)
+  const item = { type: 'item', system: { bullets: 6 } }
+  HHCthulhumancerActorImporter.loadWeapons([empty, partial, melee, text, item])
+  assert.equal(empty.system.ammo, 7)
+  assert.equal(partial.system.ammo, 4)
+  assert.equal(melee.system.ammo, 0)
+  assert.equal(text.system.ammo, 2)
+  assert.equal(item.system.ammo, undefined)
+})
+
+test('Unarmed and Mnvr are added unless a weapon with their CoC ID is already there', async () => {
+  const unarmed = { _id: 'abc', name: 'Unarmed', type: 'weapon', folder: 'f', flags: { CoC7: { cocidFlag: { id: 'i.weapon.brawl', priority: 0 } } } }
+  const mnvr = { _id: 'def', name: 'Mnvr', type: 'weapon', folder: 'f', flags: { CoC7: { cocidFlag: { id: 'i.weapon.mnvr', priority: 0 } } } }
+  const asked = []
+  globalThis.game = {
+    settings: { get: () => 'standard' },
+    CoC7: {
+      guessItems: async (type, names, options) => {
+        asked.push({ type, names, options })
+        return Object.fromEntries([unarmed, mnvr].map(i => [i.flags.CoC7.cocidFlag.id, i]).filter(([id]) => names.includes(id)))
+      }
+    }
+  }
+  const added = await HHCthulhumancerActorImporter.extractStandardWeapons([{ type: 'weapon', name: '.45 Automatic', flags: {} }], { source: 'iwms' })
+  assert.deepEqual(asked, [{ type: 'weapon', names: ['i.weapon.brawl', 'i.weapon.mnvr'], options: { source: 'iwms' } }])
+  assert.deepEqual(added.map(i => i.name), ['Unarmed', 'Mnvr'])
+  assert.equal(added[0]._id, undefined)
+  assert.equal(added[0].folder, undefined)
+  assert.equal(unarmed._id, 'abc')
+  assert.deepEqual((await HHCthulhumancerActorImporter.extractStandardWeapons([unarmed], { source: 'iwms' })).map(i => i.name), ['Mnvr'])
+  assert.deepEqual(asked[1].names, ['i.weapon.mnvr'])
+  assert.deepEqual(await HHCthulhumancerActorImporter.extractStandardWeapons([unarmed, mnvr], { source: 'iwms' }), [])
+  assert.equal(asked.length, 2)
+  globalThis.game.CoC7.guessItems = async () => ({})
+  assert.deepEqual(await HHCthulhumancerActorImporter.extractStandardWeapons([], { source: '' }), [])
+})

@@ -4,7 +4,7 @@
 
 Adds Cthulhumancer's Foundry export to the Actor Importer of the [Call of Cthulhu 7th Edition system](https://github.com/Miskatonic-Investigative-Society/CoC7-FoundryVTT) on [Foundry Virtual Tabletop](https://foundryvtt.com). Skills, weapons and gear are matched against your item compendiums, as the system's own Dhole's House import does, so imported investigators have the system's combat, specialization and uncommon skill settings and their CoC IDs.
 
-Requires Foundry VTT 12, 13 or 14 and CoC7 8.16.hh.4 or later from [ImproperSubset/CoC7-FoundryVTT](https://github.com/ImproperSubset/CoC7-FoundryVTT), installed from the manifest URL `https://github.com/ImproperSubset/CoC7-FoundryVTT/releases/latest/download/system.json`. With any other CoC7 system, the module warns the Keeper when the world loads and adds nothing.
+Requires Foundry VTT 12, 13 or 14 and CoC7 8.16.hh.7 or later from [ImproperSubset/CoC7-FoundryVTT](https://github.com/ImproperSubset/CoC7-FoundryVTT), installed from the manifest URL `https://github.com/ImproperSubset/CoC7-FoundryVTT/releases/latest/download/system.json`. With any other CoC7 system, the module warns the Keeper when the world loads and adds nothing.
 
 ## Installation.
 
@@ -34,6 +34,8 @@ The investigator is created in the **Imported characters** folder and its sheet 
 - **Pulp worlds** also match items made for the era the Pulp era is based on: 1920s items in Pulp Cthulhu, Modern items in Modern Pulp, and so on. The system on its own matches only items for the world's era or for every era. When both versions have the same CoC ID, the one with the higher CoC ID priority is used, such as the Keeper Rulebook's weapons from a compendium that marks them 1920s and Modern only.
 - **Pulp talents** that the system can apply get their rules: Quick Healer the natural healing effect, Endurance a bonus die on CON, and Beady Eye the talent adjustments that remove the small target and in melee penalties. A talent that already has effects or adjustments keeps its own.
 - **Weapons** are linked to the investigator's skills, adding the skill if the investigator doesn't have it.
+- **Unarmed and Mnvr**, the system's Fighting (Brawl) weapons for attacking barehanded and for manoeuvres, are added to every investigator who doesn't already have them.
+- **Firearms** come loaded with a full magazine.
 - **Portrait and token** come from [Tokenizer](https://foundryvtt.com/packages/vtta-tokenizer) when the export has only the default image. The module looks for files named after the investigator with `Avatar` or `Token` in their name, in Tokenizer's upload folder and in each folder in `tokenizer/`. The dynamic token ring follows Tokenizer's own setting.
 
 ## Languages.
