@@ -200,3 +200,43 @@ test('on a Pulp world items are also looked up in the era it is based on', async
   globalThis.game = mockGame('pulp', undefined)
   assert.equal((await HHCthulhumancerActorImporter.guessItems('weapon', ['.45 Automatic'], { source: 'iwms' }))['.45 Automatic'], system45)
 })
+
+test('weapons holding no ammunition are loaded with as many bullets as they take', () => {
+  const weapon = (bullets, ammo) => ({ type: 'weapon', system: { bullets, ammo } })
+  const empty = weapon(7, 0)
+  const partial = weapon(7, 4)
+  const melee = weapon(null, 0)
+  const text = weapon('2', undefined)
+  const item = { type: 'item', system: { bullets: 6 } }
+  HHCthulhumancerActorImporter.loadWeapons([empty, partial, melee, text, item])
+  assert.equal(empty.system.ammo, 7)
+  assert.equal(partial.system.ammo, 4)
+  assert.equal(melee.system.ammo, 0)
+  assert.equal(text.system.ammo, 2)
+  assert.equal(item.system.ammo, undefined)
+})
+
+test('Unarmed is added unless a weapon with its CoC ID is already there', async () => {
+  const unarmed = { _id: 'abc', name: 'Unarmed', type: 'weapon', folder: 'f', flags: { CoC7: { cocidFlag: { id: 'i.weapon.brawl', priority: 0 } } } }
+  const asked = []
+  globalThis.game = {
+    settings: { get: () => 'standard' },
+    CoC7: {
+      guessItems: async (type, names, options) => {
+        asked.push({ type, names, options })
+        return { 'i.weapon.brawl': unarmed }
+      }
+    }
+  }
+  const added = await HHCthulhumancerActorImporter.extractUnarmed([{ type: 'weapon', name: '.45 Automatic', flags: {} }], { source: 'iwms' })
+  assert.deepEqual(asked, [{ type: 'weapon', names: ['i.weapon.brawl'], options: { source: 'iwms' } }])
+  assert.equal(added.length, 1)
+  assert.equal(added[0].name, 'Unarmed')
+  assert.equal(added[0]._id, undefined)
+  assert.equal(added[0].folder, undefined)
+  assert.equal(unarmed._id, 'abc')
+  assert.deepEqual(await HHCthulhumancerActorImporter.extractUnarmed([unarmed], { source: 'iwms' }), [])
+  assert.equal(asked.length, 1)
+  globalThis.game.CoC7.guessItems = async () => ({})
+  assert.deepEqual(await HHCthulhumancerActorImporter.extractUnarmed([], { source: '' }), [])
+})

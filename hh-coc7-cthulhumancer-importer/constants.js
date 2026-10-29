@@ -14,5 +14,8 @@ export const BASE_ERAS = {
   gasLightPulp: 'gasLight'
 }
 
+// CoC ID of the system's Unarmed weapon
+export const UNARMED_COCID = 'i.weapon.brawl'
+
 // What the module needs on game.CoC7
 export const SYSTEM_API = ['actorImporterType', 'createImportCharactersFolderIfNotExists', 'guessItems', 'toKebabCase']

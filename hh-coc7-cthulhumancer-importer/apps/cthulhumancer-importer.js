@@ -1,5 +1,5 @@
 // cSpell:words cthulhumancer hhcthulhumancer vtta
-import { BASE_ERAS, SYSTEM_API, SYSTEM_ID } from '../constants.js'
+import { BASE_ERAS, SYSTEM_API, SYSTEM_ID, UNARMED_COCID } from '../constants.js'
 
 export default class HHCthulhumancerActorImporter {
   /**
@@ -464,6 +464,44 @@ export default class HHCthulhumancerActorImporter {
   }
 
   /**
+   * Load each weapon that holds no ammunition with as many bullets as it takes
+   * @param {Array} items
+   */
+  static loadWeapons (items) {
+    for (const item of items) {
+      if (item.type !== 'weapon') {
+        continue
+      }
+      const bullets = parseInt(item.system?.bullets, 10)
+      if (bullets > 0 && !(parseInt(item.system?.ammo, 10) > 0)) {
+        foundry.utils.setProperty(item, 'system.ammo', bullets)
+      }
+    }
+  }
+
+  /**
+   * The system's Unarmed weapon, unless the items already have it
+   * @param {Array} items
+   * @param {object} options
+   * @param {string} options.source
+   * @returns {Array}
+   */
+  static async extractUnarmed (items, options) {
+    if (items.some(i => i.type === 'weapon' && i.flags?.[SYSTEM_ID]?.cocidFlag?.id === UNARMED_COCID)) {
+      return []
+    }
+    const found = (await HHCthulhumancerActorImporter.guessItems('weapon', [UNARMED_COCID], { source: options.source }))[UNARMED_COCID]
+    if (typeof found === 'undefined') {
+      return []
+    }
+    const cloned = foundry.utils.duplicate(found)
+    for (const key of ['_id', '_stats', 'folder', 'sort', 'ownership']) {
+      delete cloned[key]
+    }
+    return [cloned]
+  }
+
+  /**
    * Point weapons at the Actor's skills, adding the skill if the Actor does not have it
    * @param {Actor} actor
    */
@@ -638,6 +676,8 @@ export default class HHCthulhumancerActorImporter {
     const skills = await HHCthulhumancerActorImporter.extractSkills(sourceSkills, { source: options.source, edu: isNaN(edu) ? undefined : edu, customNames: HHCthulhumancerActorImporter.customSkillNames(cthulhumancerData) }, progressBar)
     const items = await HHCthulhumancerActorImporter.extractItems(otherItems, options, progressBar)
     const gear = await HHCthulhumancerActorImporter.extractGear(gearNames, options, progressBar)
+    gear.push(...await HHCthulhumancerActorImporter.extractUnarmed(items.concat(gear), options))
+    HHCthulhumancerActorImporter.loadWeapons(items.concat(gear))
     if (CONFIG.debug.CoC7Importer) {
       console.log('Skills: ', skills)
       console.log('Items: ', items)
